@@ -9,6 +9,8 @@ namespace Company_Mangement_System.Mapping
         public EmployeeProfile()
         {
             CreateMap<Employee, CreateEmployeeDto>().ReverseMap();
+            CreateMap<Employee, EmployeeDto>().ReverseMap();
+            CreateMap<Employee, UpdateEmployeeDto>().ReverseMap();
         }
     }
 }

@@ -55,7 +55,7 @@ namespace Company_Mangement_System.Controllers
                 issuer: _configuration["Jwt:Issuer"],
                 audience: _configuration["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.Now.AddHours(Convert.ToDouble(_configuration["Jwt:Duration"])),
+                expires: DateTime.Now.AddHours(Convert.ToDouble(_configuration["Jwt:DurationInHours"])),
                 signingCredentials: creds);
 
             return new JwtSecurityTokenHandler().WriteToken(token);

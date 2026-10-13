@@ -38,7 +38,7 @@ namespace Company_Mangement_System.Controllers
             return Ok(employeeDtos);
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public async Task<ActionResult<Employee>> GetEmployee(int id)
         {
             var employee = await _unitOfWork.Employees.GetByIdAsync(id);
@@ -50,9 +50,9 @@ namespace Company_Mangement_System.Controllers
             return Ok(employeeDto);
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
-        public async Task<ActionResult> UpdateEmployee(int id, [FromBody] UpdateDepartmentDto employee)
+        public async Task<ActionResult> UpdateEmployee(int id, [FromBody] UpdateEmployeeDto employee)
         {
             var entity = await _unitOfWork.Employees.GetByIdAsync(id);
             if (entity == null)
