@@ -8,6 +8,7 @@ namespace Company_Mangement_System.Repo.Interface
         IEmployeeRepo Employees { get; }
         IGenericRepo<Project> Projects { get; }
         IEmployeeprojectRepo EmployeeProjects { get; }
+        IUserRepo Users { get; }
         Task<int> save();
     }
 }

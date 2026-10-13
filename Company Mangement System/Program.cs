@@ -27,6 +27,8 @@ namespace Company_Mangement_System
             builder.Services.AddScoped(typeof(IGenericRepo<>), typeof(GenericRepo<>));
             builder.Services.AddAutoMapper(typeof(Program).Assembly);
             builder.Services.AddScoped<IEmployeeRepo, EployeeRepo>();
+            builder.Services.AddScoped<IEmployeeprojectRepo, EmployeeProjectRepo>();
+            builder.Services.AddScoped<IUserRepo, UserRepo>();
 
             builder.Services.AddAuthentication(options => {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -57,6 +59,7 @@ namespace Company_Mangement_System
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
 

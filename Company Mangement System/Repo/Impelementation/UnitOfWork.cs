@@ -11,13 +11,15 @@ namespace Company_Mangement_System.Repo.Impelementation
         public IEmployeeRepo Employees { get; }
         public IGenericRepo<Project> Projects { get; }
         public IEmployeeprojectRepo EmployeeProjects { get; }
-        public UnitOfWork(AppDbContext context, IGenericRepo<Department> departments, IEmployeeRepo employees, IGenericRepo<Project> projects, IEmployeeprojectRepo employeeProjects)
+        public IUserRepo Users { get; }
+        public UnitOfWork(AppDbContext context, IGenericRepo<Department> departments, IEmployeeRepo employees, IGenericRepo<Project> projects, IEmployeeprojectRepo employeeProjects, IUserRepo users)
         {
             _context = context;
             Departments = departments;
             Employees = employees;
             Projects = projects;
             EmployeeProjects = employeeProjects;
+            Users = users;
         }
 
         public Task<int> save()

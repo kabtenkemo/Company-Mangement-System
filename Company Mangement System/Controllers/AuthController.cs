@@ -3,6 +3,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Company_Mangement_System.Dtos;
 using Company_Mangement_System.Models;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
+using System.Security.Claims;
+using Company_Mangement_System.Repo.Interface;
 
 namespace Company_Mangement_System.Controllers
 {
@@ -11,24 +16,49 @@ namespace Company_Mangement_System.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
+        private readonly IConfiguration _configuration;
+        private readonly IUnitOfWork _unitofwork;
+        public AuthController(IConfiguration configuration, IUnitOfWork unitofwork)
+        {
+            _configuration = configuration;
+            _unitofwork = unitofwork;
+        }
+
         [HttpPost("login")]
         public IActionResult Login([FromBody] LoginDto request)
         {
-            // Implement your authentication logic here
-            // For example, validate the username and password against a database
-            if (request.Username == "admin" && request.Password == "password")
+            if (request == null || string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Password))
             {
-                // Generate a JWT token or any other authentication token
-                var token = "your_generated_token_here";
+                return BadRequest("Username and password are required.");
+            }
+            var user = _unitofwork.Users.GetByEmailAsync(request.Email).Result;
+            if (user != null && BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
+            {
+               
+                var token = GenerateJwtToken(user);
                 return Ok(new { Token = token });
             }
             return Unauthorized();
         }
 
-        private string GenerateJwtToken(string username)
+        private string GenerateJwtToken(ApplicationUser user)
         {
-            
-            return "your_generated_token_here";
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            List<Claim> claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Role, user.Role )
+            };
+
+            var token = new JwtSecurityToken(
+                issuer: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Audience"],
+                claims: claims,
+                expires: DateTime.Now.AddHours(Convert.ToDouble(_configuration["Jwt:Duration"])),
+                signingCredentials: creds);
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
 }
